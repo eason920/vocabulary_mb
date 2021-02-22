@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>vocabulary 單字庫</title>
+		<link href="./css/main.css" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/506022d22e.js"></script>
+		<script src="./assets/plugins/vue/vue2.6.12.js"></script>
+		<script src="./assets/plugins/jquery/jquery.1.12.4.min.js"></script>
+		<script src="./js/cpn.js"></script>
+		<!-- <script src="./js/index.js"></script> -->
+	</head>
+	<body>
+		<div class="vhead" onclick="window.history.back()">
+			<h1><i class="fas fa-chevron-left"></i>單字庫</h1>
+		</div>
+		<div class="vbody" id="app">
+			<div class="vbox">
+				<cpn_box
+					v-for='(item, i) in list'
+					:prop='item'
+					:key='i'
+					@content_click2='fnEdit'
+				></cpn_box>
+			</div>
+		</div>
+	</body>
+	<script>
+		const App = new Vue({
+			created(){
+				const vm = this;
+				$.ajax({
+					url: 'https://funday.asia/NewMylessonMobile/api/WordCard?member_id=227332&customer_id=411',
+
+					success(res){
+						// console.log(res.data);
+						res.data.forEach(function(ary, i){
+							const key = ary[0].En_word.split('')[0].toLowerCase();
+							ary.forEach(function(item, i){
+								item.id = key + i;
+							});
+							const obj = {key, ary};
+							vm.list.push(obj);
+						});
+					}
+				});
+			},
+			methods: {
+				fnEdit(){
+					console.log('fnEdit work!');
+				}
+			},
+			data: {
+				list: new Array(),
+			},
+		  el: '#app',
+		  components: {
+				cpn_box,
+				cpn_item
+		  }
+		});
+	</script>
+</html>
