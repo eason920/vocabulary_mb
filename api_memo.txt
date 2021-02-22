@@ -1,0 +1,11 @@
+const { create } = require("domain")
+
+fnEdit(prop.En_word, prop.Ch_word)
+list
+https://funday.asia/NewMylessonMobile/api/WordCard?member_id=227332&customer_id=411
+create
+https://funday.asia/NewMylessonmobile/C/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=new_eason&Chkeyword=new_eason_ch_ch
+update
+https://funday.asia/NewMylessonmobile/U/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=new_eason&Chkeyword=new_eason_lalala
+delete
+https://funday.asia/NewMylessonmobile/D/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=new_eason

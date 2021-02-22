@@ -1,0 +1,38 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="UTF-8")
+		meta(http-equiv="X-UA-Compatible", content="IE=edge")
+		meta(name="viewport", content="width=device-width, initial-scale=1.0")
+		title vocabulary 單字庫
+		link( href="./css/main.css" rel="stylesheet")
+		script(src="https://kit.fontawesome.com/506022d22e.js")
+		script(src='./assets/plugins/jquery/jquery.1.12.4.min.js')
+		script(src='./js/index.js')
+	body
+		.vhead(onclick='window.history.back()')
+			h1
+				i.fas.fa-chevron-left
+				|單字庫
+		.vbody
+			.vbox
+				.vbox-title A
+				.vbox-list
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+				.vbox-title B
+				.vbox-list
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+				.vbox-title C
+				.vbox-list
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
+					include partials/item.pug
