@@ -15,20 +15,26 @@
 	width: calc( 100% - #{$wl} )
 	font-size: 0
 
-.mbox-input
-	padding: 5px
+.mbox-txt
+	min-height: 32px
 	font-size: 17px
+	padding: 5px
+
+.mbox-textarea
+	padding: 5px
+	font:
+		size: 17px
+		family: PingFangTC-Regular,'Microsoft JhengHei', sans-serif
 	outline: none
-	border: solid 1px #fff
 	border-radius: 3px
-	&[data-edit='true'],
-	&[contenteditable='true']
-		border: solid 1px #1a7aff
-		& + .mbox-editbox
-			display: flex
+	border: solid 1px #1a7aff
+	width: 95%
+	height: 100px
+	resize: none
 
 .mbox-editbox
 	display: none
+	display: flex
 	justify-content: flex-end
 	padding-top: 5px
 	i

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>vocabulary 單字庫</title>
+		<link href="./css/main.css" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/506022d22e.js"></script>
+		<script src="./assets/plugins/vue/vue2.6.12.js"></script>
+		<script src="./assets/plugins/jquery/jquery.1.12.4.min.js"></script>
+	</head>
+	<body>
+		<div class="vhead" onclick="window.history.back()">
+			<h1><i class="fas fa-chevron-left"></i>單字庫</h1>
+		</div>
+		<div class="vbody" id="app">
+			<div class="vbox">
+				<div class="vbox-box"
+					v-for="(block, i) in filterList"
+					:key="i"
+				>
+					<div class="vbox-title">{{block.key}}</div>
+					<div class="vbox-list">
+						<div class="vbox-item"
+							v-for="(item, j) in block.ary"
+							:key="j"
+						>
+							<div class="vbox-voc"
+								@click="fnReset"
+							>{{item.En_word}}</div>
+							<div class="vbox-memo">
+								<div class="mbox-txt"
+									v-if="item.id !== editing.id"
+									@click="editing={id: item.id, memo: item.Ch_word}"
+								>{{item.Ch_word}}</div>
+								<div v-else>
+									<textarea class="mbox-textarea"
+										v-model="editing.memo"
+									></textarea>
+									<div class="mbox-editbox">
+										<i class="fas fa-check mbox-update"
+											@click="fnUpdate(item.En_word, i, j)"
+										></i>
+										<i class="fas fa-trash-alt mbox-delete"></i>
+										<i class="fas fa-times mbox-cancle"
+											@click="fnReset"
+										></i>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+
+		new Vue({
+			methods: {
+				fnUpdate(en, i, j){
+					const vm = this;
+					const memo = vm.editing.memo;
+					$.ajax({
+						url: "../U/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + memo,
+						type: "POST",
+						contentType: "application/json",
+						success(){
+							vm.list[i].ary[j].Ch_word = memo;
+							vm.fnReset();
+						}
+					});
+				},
+				fnReset(){
+					this.editing={id: '', memo: ''};
+				}
+			},
+			created(){
+				const vm = this;
+				$.ajax({
+					url: "../api/WordCard?member_id=227332&customer_id=411",
+					type: "GET",
+					contentType: "application/json",
+					success(res){
+						res.data.forEach(function(ary, i){
+							const key = ary[0].En_word.split('')[0];
+							ary.forEach(function(item, i){
+								item.id = key + '-' + i;
+								if(item.Ch_word==""){ item.Ch_word = "( no memo )" }
+							});
+							const obj = {key, ary};
+							vm.list.push(obj);
+						});
+					}
+				})
+			},
+			computed: {
+				filterList(){ return this.list }
+			},
+			data: {
+				list: new Array(),
+				editing: {id: '', memo: ''}
+			},
+			el: '#app'
+		});
+	</script>
+</html>

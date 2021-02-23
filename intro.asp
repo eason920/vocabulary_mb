@@ -1,3 +1,16 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%>
+<!-- #include virtual="include/dbconnection.asp"-->  
+<%
+	response.Buffer = true   
+	session.CodePage = 65001   
+	response.Charset = "utf-8"
+
+	sql="select count(indx) as c from member where customer_id=411"
+	set rs=connection2.execute(sql)
+	if not rs.eof then
+		num=rs("c")
+	end if
+%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -56,11 +69,12 @@
 		</div>
 	</body>
 	<script>
+		const member_id = 227332;
 		const App = new Vue({
 			created(){
 				const vm = this;
 				$.ajax({
-					url: '../api/WordCard?member_id=227332&customer_id=411',
+					url: '../api/WordCard?member_id=' + member_id + '&customer_id=411',
 					type: 'GET',
 					contentType: 'application/json',
 					success(res){
@@ -89,7 +103,7 @@
 				fnUpdate(en, ch, i, j){
 					const vm = this;
 					$.ajax({
-						url: "../U/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + ch,
+						url: "../U/api/vocabulary/join?member_id=" + member_id + "&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + ch,
 						type: 'post',
 						contentType: 'application/json',
 						success(res){
@@ -104,7 +118,7 @@
 					const check = confirm('確定要刪除「' + en + ' 單字及筆記」嗎?\n**確認刪除後將無法回朔');
 					if(check){
 						$.ajax({
-							url: "../D/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=" + en,
+							url: "../D/api/vocabulary/join?member_id=" + member_id + "&customer_id=411&Enkeyword=" + en,
 							type: 'POST',
 							contentType: 'application/json',
 							success(res){
