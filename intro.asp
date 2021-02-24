@@ -5,11 +5,13 @@
 	session.CodePage = 65001   
 	response.Charset = "utf-8"
 
-	sql="select count(indx) as c from member where customer_id=411"
-	set rs=connection2.execute(sql)
-	if not rs.eof then
-		num=rs("c")
+	mindx=Get_mid()  '--使用者ID
+	cindx=Get_cid()  '--customer ID
+
+	if session("indx")="" then
+		Response.Redirect("../../../")
 	end if
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +27,7 @@
 	</head>
 	<body>
 		<div class="vhead" onclick="window.history.back()">
-			<h1><i class="fas fa-chevron-left"></i>單字庫</h1>
+			<h1><i class="fas fa-chevron-left"></i><span>單字庫</span></h1>
 		</div>
 		<div class="vbody" id="app">
 			<div class="vbox">
@@ -69,19 +71,18 @@
 		</div>
 	</body>
 	<script>
-		const member_id = 227332;
 		const App = new Vue({
 			created(){
 				const vm = this;
 				$.ajax({
-					url: '../api/WordCard?member_id=' + member_id + '&customer_id=411',
+					url: '../api/WordCard?member_id=' + vm.memberId + '&customer_id='+vm.cindx,
 					type: 'GET',
 					contentType: 'application/json',
 					success(res){
 						res.data.forEach(function(ary, i){
 							const key = ary[0].En_word.split('')[0].toLowerCase();
 							ary.forEach(function(item, i){
-								if( item.Ch_word == "" ){ item.Ch_word = "(no memo)"}
+								if( item.Ch_word == "" ){ item.Ch_word = vm.emptyString}
 								item.id = key + '-' + i;
 							});
 							const obj = {key, ary};
@@ -103,10 +104,11 @@
 				fnUpdate(en, ch, i, j){
 					const vm = this;
 					$.ajax({
-						url: "../U/api/vocabulary/join?member_id=" + member_id + "&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + ch,
+						url: "../U/api/vocabulary/join?member_id=" + vm.memberId + "&customer_id="+vm.cindx+"&Enkeyword=" + en + "&Chkeyword=" + ch,
 						type: 'post',
 						contentType: 'application/json',
 						success(res){
+							if( vm.editing.txt == "" ){vm.editing.txt=vm.emptyString}
 							vm.list[i].ary[j].Ch_word = vm.editing.txt;
 							vm.editing = {id: '', txt: ''};
 						}
@@ -118,7 +120,7 @@
 					const check = confirm('確定要刪除「' + en + ' 單字及筆記」嗎?\n**確認刪除後將無法回朔');
 					if(check){
 						$.ajax({
-							url: "../D/api/vocabulary/join?member_id=" + member_id + "&customer_id=411&Enkeyword=" + en,
+							url: "../D/api/vocabulary/join?member_id=" + vm.memberId + "&customer_id="+vm.cindx+"&Enkeyword=" + en,
 							type: 'POST',
 							contentType: 'application/json',
 							success(res){
@@ -134,7 +136,10 @@
 			},
 			data: {
 				list: new Array(),
-				editing: {id: '', txt: ''}
+				editing: {id: '', txt: ''},
+				emptyString: "(no memo)",
+				memberId: '<%=mindx%>',
+				cindx: '<%=cindx%>',
 			},
 		  el: '#app'
 		});

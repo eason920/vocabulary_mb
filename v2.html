@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<div class="vhead" onclick="window.history.back()">
-			<h1><i class="fas fa-chevron-left"></i>單字庫</h1>
+			<h1><i class="fas fa-chevron-left"></i><span>單字庫</span></h1>
 		</div>
 		<div class="vbody" id="app">
 			<div class="vbox">
@@ -42,7 +42,9 @@
 										<i class="fas fa-check mbox-update"
 											@click="fnUpdate(item.En_word, i, j)"
 										></i>
-										<i class="fas fa-trash-alt mbox-delete"></i>
+										<i class="fas fa-trash-alt mbox-delete"
+											@click="fnDelete(item.En_word, i , j)"
+										></i>
 										<i class="fas fa-times mbox-cancle"
 											@click="fnReset"
 										></i>
@@ -56,21 +58,38 @@
 		</div>
 	</body>
 	<script>
-
 		new Vue({
 			methods: {
 				fnUpdate(en, i, j){
 					const vm = this;
-					const memo = vm.editing.memo;
+					let memo = vm.editing.memo;
 					$.ajax({
-						url: "../U/api/vocabulary/join?member_id=227332&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + memo,
+						url: "../U/api/vocabulary/join?member_id=" + vm.memberId + "&customer_id=411&Enkeyword=" + en + "&Chkeyword=" + memo,
 						type: "POST",
 						contentType: "application/json",
 						success(){
+							if( memo == "" ){memo = vm.emptyString}
 							vm.list[i].ary[j].Ch_word = memo;
 							vm.fnReset();
 						}
 					});
+				},
+				fnDelete(en, i , j){
+					const vm = this;
+					const check = confirm('sure to delete "' + en + '"?\n**CAN NOT BACKUP THIS MEMO!');
+					if( check ){
+						$.ajax({
+							url: "../D/api/vocabulary/join?member_id=" + vm.memberId + "&customer_id=411&Enkeyword=" + en,
+							type: "POST",
+							contentType: "application/json",
+							success(){
+								vm.list[i].ary.splice(j, 1);
+								vm.fnReset();
+							}
+						});
+					}else{
+						vm.fnReset();
+					};
 				},
 				fnReset(){
 					this.editing={id: '', memo: ''};
@@ -79,7 +98,7 @@
 			created(){
 				const vm = this;
 				$.ajax({
-					url: "../api/WordCard?member_id=227332&customer_id=411",
+					url: "../api/WordCard?member_id=" + vm.memberId + "&customer_id=411",
 					type: "GET",
 					contentType: "application/json",
 					success(res){
@@ -87,7 +106,7 @@
 							const key = ary[0].En_word.split('')[0];
 							ary.forEach(function(item, i){
 								item.id = key + '-' + i;
-								if(item.Ch_word==""){ item.Ch_word = "( no memo )" }
+								if(item.Ch_word==""){ item.Ch_word = vm.emptyString }
 							});
 							const obj = {key, ary};
 							vm.list.push(obj);
@@ -100,7 +119,9 @@
 			},
 			data: {
 				list: new Array(),
-				editing: {id: '', memo: ''}
+				editing: {id: '', memo: ''},
+				memberId: 227332,
+				emptyString: "( no memo )",
 			},
 			el: '#app'
 		});
